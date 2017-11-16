@@ -64,8 +64,8 @@
         mec_right_back_ =  0;
 
         stabilisize_base_link_mode_ = true;
-        stabilisize_ignore_front_ = false;
-        stabilisize_ignore_back_ = true;
+        stabilisize_ignore_front_cmd_ = false;
+        stabilisize_ignore_back_cmd_ = true;
         last_time_ = ros::Time::now();
         stabilization_pid_.initPid(1.00, 0.30, 0.00, 0.1, -0.1);
         pos_desired1 = 0;
@@ -191,8 +191,8 @@
     ros::Subscriber JointStatesSubscriber_;
 
     bool stabilisize_base_link_mode_;
-    bool stabilisize_ignore_front_;
-    bool stabilisize_ignore_back_;
+    bool stabilisize_ignore_front_cmd_;
+    bool stabilisize_ignore_back_cmd_;
     ros::Time last_time_;
     control_toolbox::Pid stabilization_pid_;
     double pos_desired1;
@@ -221,6 +221,10 @@
 
       leg_velocity_mode_ = cmd_msg->leg_velocity_mode;
       mecanum_movement_mode_ = cmd_msg->mecanum_movement_mode;
+
+      stabilisize_base_link_mode_ = cmd_msg->stabilisize_base_link_mode;
+      stabilisize_ignore_front_cmd_ = cmd_msg->stabilisize_ignore_front;
+      stabilisize_ignore_back_cmd_ = cmd_msg->stabilisize_ignore_back;
 
     }
 
@@ -298,13 +302,14 @@
 
       if(stabilisize_base_link_mode_ == true){
 
-      	if(stabilisize_ignore_back_ == true){
+      	if(stabilisize_ignore_back_cmd_ == true){
       		pos_current = joint_leg_back_pos_;
       		pos_desired = (base_link_imu_acc_x_/10 + pos_desired1 + pos_desired2)/3;
       		//here reset pid;
       	}
-      	else if(stabilisize_ignore_front_ == true){
+      	else if(stabilisize_ignore_front_cmd_ == true){
       		pos_current = joint_leg_front_pos_;
+      		pos_desired = (base_link_imu_acc_x_/10 + pos_desired1 + pos_desired2)/3;
       		//reset pid;
       	}
 
@@ -312,12 +317,12 @@
       	pos_new = stabilization_pid_.updatePid( pos_desired, time - last_time_);
       	last_time_ = time;
 
-      	if(stabilisize_ignore_back_ == true){
+      	if(stabilisize_ignore_back_cmd_ == true){
       		left_back_leg_ = pos_new + pos_current;
       		right_back_leg_ = pos_new;
       	}
-      	else if(stabilisize_ignore_front_ == true){
-      		left_front_leg_ = pos_new;
+      	else if(stabilisize_ignore_front_cmd_ == true){
+      		left_front_leg_ = pos_new + pos_current;
       		right_front_leg_ = pos_new;
       	}
       	pos_desired1 = pos_desired; 

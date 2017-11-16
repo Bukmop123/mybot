@@ -35,6 +35,14 @@ double rosTimeToDouble(ros::Time RosTime) //ToDo implement in a library
 
 		joystick_subscribed_ = false;
 
+		stabilisize_base_link_mode_ = false;
+		stabilisize_ignore_front_ = false;
+		stabilisize_ignore_back_ = false;
+		stabilisize_ignore_front_cmd_ = false;
+		stabilisize_ignore_back_cmd_ = false;
+		stabilisize_ignore_front_cmd1_ = false;
+		stabilisize_ignore_back_cmd1_ = false;
+
 
 		JoystickSubscriber_ =  n.subscribe("/joy",10, &OperatorCommands::TrustJoyCallback ,this);
 		BasicCmdPublisher_ = n.advertise<mybot_msg::msgMybot_basicMovement>("mybot/robot/cmdBasicMovement", 10);
@@ -51,6 +59,9 @@ double rosTimeToDouble(ros::Time RosTime) //ToDo implement in a library
 
 
 	cmdBasicMovement_.mecanum_movement_mode = mecanum_movement_mode_;
+	cmdBasicMovement_.stabilisize_base_link_mode = stabilisize_base_link_mode_;
+	cmdBasicMovement_.stabilisize_ignore_front = stabilisize_ignore_front_;
+	cmdBasicMovement_.stabilisize_ignore_back = stabilisize_ignore_back_;
 
 	cmdBasicMovement_.robot_x = robot_x_;
     cmdBasicMovement_.robot_y = robot_y_;
@@ -94,6 +105,13 @@ private:
 	bool joystick_subscribed_;
 
 	bool mecanum_movement_mode_;
+	bool stabilisize_base_link_mode_;
+	bool stabilisize_ignore_front_;
+	bool stabilisize_ignore_back_;
+    bool stabilisize_ignore_front_cmd_;
+    bool stabilisize_ignore_back_cmd_;
+    bool stabilisize_ignore_front_cmd1_;
+    bool stabilisize_ignore_back_cmd1_;
 
 	double robot_x_;
 	double robot_y_;
@@ -182,6 +200,11 @@ private:
     	leg_left_back_up_vel_cmd_ = buttons[4];
     	leg_left_back_down_vel_cmd_ = buttons[6];
 
+    	stabilisize_ignore_front_cmd_  = buttons[17];
+    	stabilisize_ignore_back_cmd_  = buttons[19];
+
+
+
     }else{
     	left_front_leg_cmd_ = inv_front_leg_*axes[7];		//viktor
     	left_back_leg_cmd_ = axes[6];		//viktor
@@ -193,10 +216,35 @@ private:
     	leg_left_back_up_vel_cmd_ = buttons[6];
     	leg_left_back_down_vel_cmd_ = buttons[8];
 
-    }
-    
+    	stabilisize_ignore_front_cmd_  = buttons[11];	//stabilisazion front
+    	stabilisize_ignore_back_cmd_  = buttons[10];	//stabilisazion back
 
-    
+    	
+
+    }
+     if( (stabilisize_ignore_front_cmd_ == true) && (stabilisize_ignore_front_cmd1_ == false) ){
+     	
+     	stabilisize_base_link_mode_ = !stabilisize_ignore_front_;
+     	stabilisize_ignore_front_ = !stabilisize_ignore_front_;
+     	stabilisize_ignore_back_ = false;
+     	stabilisize_ignore_front_cmd1_ = true;
+
+    }else if(stabilisize_ignore_front_cmd_ == false){
+    	stabilisize_ignore_front_cmd1_ = false;
+    }
+
+
+    if( (stabilisize_ignore_back_cmd_ == true) && (stabilisize_ignore_back_cmd1_ == false) ){
+    	
+    	stabilisize_base_link_mode_ = !stabilisize_ignore_back_;
+    	stabilisize_ignore_back_ = !stabilisize_ignore_back_;
+    	stabilisize_ignore_front_ = false;
+    	stabilisize_ignore_back_cmd1_ = true;
+
+   	}else if(stabilisize_ignore_back_cmd_ == false){
+   		stabilisize_ignore_back_cmd1_ = false;
+   	}
+
 
 
     
