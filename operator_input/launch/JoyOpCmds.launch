@@ -1,0 +1,19 @@
+<launch>
+
+  <group ns="human_input">
+     <!-- joy node -->
+  		<node respawn="true" pkg="joy"
+       	 		type="joy_node" name="NGS_joystick" >
+    		<param name="dev" type="string" value="/dev/input/js1" />
+    		<param name="deadzone" value="0.12" />
+  	</node>
+  </group>
+
+
+
+
+  <!--group ns="process_input"-->
+    <node pkg="operator_input" name="operator_cmds_node" type="operator_cmds_node"/>
+  <!--/group-->
+
+</launch>

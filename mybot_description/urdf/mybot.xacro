@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+
+<robot name="mybot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:arg name="kinect_enabled" default="true" />
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+<xacro:property name="M_PI" value="3.14159"/>
+<property name="M_PI" value="3.14159"/>
+
+  <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
+  <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find mybot_description)/urdf/robot/defaults.xacro" /> 
+  <xacro:include filename="$(find mybot_description)/urdf/robot/chasis.xacro" /> 
+  <xacro:include filename="$(find mybot_description)/urdf/robot/wheel.xacro" /> 
+  <xacro:include filename="$(find mybot_description)/urdf/robot/sensor.xacro" /> 
+  <!--xacro:include filename="$(find mybot_description)/urdf/robot/arm.xacro" /--> 
+  <xacro:include filename="$(find mybot_description)/urdf/robot/arm_wide.xacro" /> 
+  <xacro:include filename="$(find mybot_description)/urdf/robot/imu.xacro" />
+  <!-- 
+
+
+<xacro:include filename="$(find mybot_description)/urdf/macros.xacro" /> -->
+
+
+ 
+
+</robot>

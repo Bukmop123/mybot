@@ -1,0 +1,89 @@
+<?xml version='1.0'?>
+
+<robot name="mybot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- chasis -->
+<xacro:property name="chasisX" value="0.8"/>
+<xacro:property name="chasisY" value="0.2"/>
+<xacro:property name="chasisZ" value="0.1"/>
+<!-- caster -->
+<xacro:property name="casterX" value="0.35"/>
+<xacro:property name="casterY" value="0"/>
+<xacro:property name="casterZ" value="-0.05"/>
+
+<link name='chassis'>
+    <pose>0 0 0.1 0 0 0</pose>
+
+    <inertial>
+      <mass value="10.0"/>
+      <origin xyz="0.0 0 0.1" rpy=" 0 0 0"/>
+      <inertia
+          ixx="0.5" ixy="0" ixz="0"
+          iyy="1.0" iyz="0"
+          izz="0.1"
+      />
+    </inertial>
+
+    <collision name='collision'>
+      <geometry>
+        <box size="${chasisX} ${chasisY} ${chasisZ}"/>
+      </geometry>
+    </collision>
+
+    <visual name='chassis_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size="${chasisX} ${chasisY} ${chasisZ}"/>
+      </geometry>
+    </visual>
+
+
+    <collision name='caster1_collision'>
+      <origin xyz="${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual name='caster1_visual'>
+      <!-- <origin xyz="${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/> -->
+	<origin xyz="${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+
+    <collision name='caster2_collision'>
+      <origin xyz="-${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual name='caster2_visual'>
+      <!-- <origin xyz="${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/> -->
+	<origin xyz="-${casterX} ${casterY} ${casterZ}" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>

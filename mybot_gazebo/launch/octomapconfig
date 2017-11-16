@@ -1,0 +1,66 @@
+ <!-- Octomap -->
+<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+<!-- maximum range to integrate (speedup!) -->
+<!-- data source to integrate (PointCloud2) -->
+<!-- output collision map -->
+  <arg name="changeIdFrame" default="/talker/changes"/>
+
+<!--
+ <node pkg="nodelet" type="nodelet" name="standalone_nodelet"  args="manager"/>
+
+  <node pkg="nodelet" type="nodelet" name="octomap_server_nodelet" args="load octomap_server/OctomapServerNodelet standalone_nodelet">
+
+
+
+<param name="resolution" value="0.05" />
+		
+		
+		<param name="frame_id" type="string" value="odom_combined" />
+		
+		
+		<param name="sensor_model/max_range" value="5.0" />
+		
+		
+		<remap from="octomap_server_nodelet/cloud_in" to="cloud_in" />
+	 
+	  
+	  <remap from="octomap_server_nodelet/collision_map_out" to="collision_map_out"/>
+	
+</node>-->
+
+
+    <!-- data source to integrate (PointCloud2) -->
+    <remap from="cloud_in" to="/camera/depth/points" />
+   <arg name="path" default=""/>
+
+
+	<!-- you can load an exisiting tree with <node ... args="tree.bt"> !-->
+
+	<node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_talker" output="screen" args="$(arg path)">
+		<param name="resolution" value="0.05" />
+		<param name="frame_id" type="string" value="map" />
+		<param name="sensor_model/max_range" value="4.0" />
+		<param name="save_directory" value="$(optenv OCTOMAP_SAVE_DIR ./)" />
+		<param name="track_changes" value="true"/>
+<param name="filter_ground" value="false"/>
+		<param name="listen_changes" value="false"/>
+<param name="latch" value="false"/>
+		<param name="topic_changes" value="/octomap_tracking_server/changeset" />
+    <param name="change_id_frame" value="$(arg changeIdFrame)" />
+    <param name="min_change_pub" value="0" />
+		
+</node>
+
+<!--remap from="cloud_in" to="/rgbdslam/batch_clouds" /-->
+<!--
+	<node pkg="octomap_server" type="octomap_tracking_server_node" name="octomap_listener" output="screen">
+		<param name="resolution" value="0.02" />
+		<param name="frame_id" type="string" value="dev0" />
+		<param name="sensor_model/max_range" value="4.0" />
+		<param name="save_directory" value="$(optenv OCTOMAP_SAVE_DIR2 ./)" />
+		<param name="track_changes" value="false"/>
+		<param name="listen_changes" value="true"/>
+		<param name="topic_changes" value="/octomap_tracking_server/changeset" />
+		
+</node>
+-->

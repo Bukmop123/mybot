@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <arg name="world" default="empty"/> 
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="verbose" value="false" />
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find mybot_gazebo)/worlds/mybot.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+</include>
+
+  
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'"/>
+
+  <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+   args="-urdf -param robot_description -model mybot" />
+
+
+     <!-- joy node -->
+  	<node respawn="true" pkg="joy"
+       	 		type="joy_node" name="NGS_joystick" >
+    		<param name="dev" type="string" value="/dev/input/js0" />
+    		<param name="deadzone" value="0.12" />
+  	</node>
+
+
+
+  <!--group ns="process_input"-->
+    <node pkg="operator_input" name="operator_cmds_node" type="operator_cmds_node"/>
+  <!--/group-->
+
+<node pkg="mybot_basic_mov_control" name="basicMovementControl" type="mybot_basic_mov_control"/>
+
+
+
+    
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+    <rosparam command="load" file="$(find mybot_control)/config/mybot_localization.yaml" />
+
+   <!-- Placeholder for output topic remapping
+    <remap from="odometry/filtered" to=""/>
+    <remap from="accel/filtered" to=""/>
+    -->
+  </node>
+
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find mybot_control)/config/mybot_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+<!-- joint_state_controller necesita ser instalado -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/mybot" args="joint_state_controller
+	leg_left_front_pc 
+	leg_left_back_pc 
+	tr_left_front_vc
+	tr_left_back_vc
+	tr_right_front_vc
+	tr_right_back_vc
+	mw_left_front_vc
+	mw_left_back_vc
+	mw_right_front_vc
+	mw_right_back_vc"/>
+
+
+ <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" output="screen">
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'"/>
+    <!--param name="use_gui" value="False"/-->
+    <remap from="/joint_states" to="/mybot/joint_states" />
+    <!--rosparam param="source_list">["my_controller/robot/joint_states"]</rosparam-->
+  </node>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" respawn="false" output="screen">
+    <!--param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'"/-->
+    <remap from="/joint_states" to="/mybot/joint_states" />
+  </node>
+
+
+  <!--/group-->
+
+
+</launch>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+
+  
+
+  <!-- Run the map server 
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find mybot_description)/map/my_map.pgm my_map_resolution"/>-->
+
+  <!--- Run AMCL -->
+  <include file="$(find amcl)/examples/amcl_omni.launch" />
+<node pkg="operator_input" name="operator_cmds_node" type="operator_cmds_node"/>
+  <node pkg="mybot_description" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find mybot_description)/map/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find mybot_description)/map/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find mybot_description)/map/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_description)/map/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_description)/map/base_local_planner_params.yaml" command="load" />
+  </node>
+
+
+<!-- agregado para el mapa
+ <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mybot_gazebo)/launch/mapping.rviz"/>
+  
+  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping">
+    <remap from="/mybot/laser/scan" to="/robot/laser/scan"/>
+    <param name="chassis" value="base_footprint"/>
+
+  </node>-->
+<!-- fin de lo agregado para el mapa -->
+
+</launch>

@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<robot name="mybot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="default_inertial" params="mass">
+	<inertial>
+		<origin xyz="0 0 0" rpy="0 1.5707 1.5707"/> 
+		<mass value="${mass}" />
+		<inertia ixx="0.1" ixy="0.0" ixz="0.0"
+			 iyy="0.1" iyz="0.0" izz="0.1" />
+	</inertial>
+	</xacro:macro>
+</robot>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find mybot_control)/config/mybot_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+<!-- joint_state_controller necesita ser instalado -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/mybot" args="
+	leg_left_front_pc 
+	leg_left_back_pc 
+	tr_left_front_vc
+	tr_left_back_vc
+	tr_right_front_vc
+	tr_right_back_vc
+	mw_left_front_vc
+	mw_left_back_vc
+	mw_right_front_vc
+	mw_right_back_vc
+
+"/>
+
+
+
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" respawn="false" output="screen">
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'"/>
+    <remap from="/joint_states" to="/mybot/joint_states" />
+  </node>
+
+</launch>
+
+
+
+

@@ -1,0 +1,3 @@
+  <group ns="process_op_input">
+    <node pkg="operator_input" name="operator_cmds_node" type="operator_cmds_node"/>
+  </group>
